@@ -10,9 +10,9 @@ const ListProducts_SP = () => {
     const fetchProducts = async () => {
       try {
         const { data, error } = await supabase
-          .from("product1")
+          .from("products") // SỬA 1: Đổi tên bảng
           .select("*")
-          .order("id", { ascending: true });
+          .order("product_id", { ascending: true }); // SỬA 2: Đổi tên cột
         if (error) throw error;
         setListProduct(data);
       } catch (err) {
@@ -35,8 +35,8 @@ const ListProducts_SP = () => {
       >
         {listProduct.map((p) => (
           <div
-            key={p.id}
-            onClick={() => navigate(`/detail/${p.id}`)}
+            key={p.product_id} // SỬA 3: Dùng khóa chính mới
+            onClick={() => navigate(`/detail/${p.product_id}`)} // SỬA 4: Dùng khóa chính mới
             style={{
               border: "1px solid #ddd",
               borderRadius: "10px",

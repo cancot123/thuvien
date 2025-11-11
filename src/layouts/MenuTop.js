@@ -23,7 +23,7 @@ const MenuTop = () => {
           <a href="/trang1">Trang 1</a>
         </li>
         <li>
-          <a target="blank" href="/trang2">
+          <a href="/trang2">
             Trang 2
           </a>
         </li>
@@ -32,7 +32,7 @@ const MenuTop = () => {
             target="blank"
             href="https://giadinh.edu.vn/de-an-tuyen-sinh-truong-dai-hoc-gia-dinh-nam-2024"
           >
-            Đề án TS
+      
           </a>
         </li>
         <li>
@@ -40,22 +40,22 @@ const MenuTop = () => {
             target="blank"
             href="https://giadinh.edu.vn/truong-dai-hoc-gia-dinh-thong-bao-3-cong-khai-nam-hoc"
           >
-            Ba công khai
+  
           </a>
         </li>
         <li>
           <a target="blank" href="https://sinhvien.giadinh.edu.vn/">
-            Xem điểm
+  
           </a>
         </li>
         <li>
           <a target="blank" href="https://lms.giadinh.edu.vn/">
-            E-learning
+      
           </a>
         </li>
         <li>
           <a target="blank" href="https://library.giadinh.edu.vn/search">
-            Thư viện số
+           
           </a>
         </li>
         <li>

@@ -9,9 +9,9 @@ const ListProducts_SP_Admin = () => {
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
-      .from("product1")
+      .from("products") // SỬA 1: Đổi tên bảng
       .select("*")
-      .order("id", { ascending: true });
+      .order("product_id", { ascending: true }); // SỬA 2: Đổi tên cột
     if (error) console.error("Lỗi:", error.message);
     else setProducts(data);
   };
@@ -21,8 +21,12 @@ const ListProducts_SP_Admin = () => {
   }, []);
 
   const handleDelete = async (id) => {
+    // 'id' ở đây là 'product_id' được truyền vào
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
-      const { error } = await supabase.from("product1").delete().eq("id", id);
+      const { error } = await supabase
+        .from("products") // SỬA 3: Đổi tên bảng
+        .delete()
+        .eq("product_id", id); // SỬA 4: Đổi tên cột
       if (error) alert("Lỗi khi xóa: " + error.message);
       else fetchProducts();
     }
@@ -57,7 +61,7 @@ const ListProducts_SP_Admin = () => {
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p.id}>
+                <tr key={p.product_id}> {/* SỬA 5: Dùng khóa chính mới */}
                   <td style={{ width: "100px" }}>
                     <img src={p.image} alt={p.title} className="thumb" />
                   </td>
@@ -69,13 +73,13 @@ const ListProducts_SP_Admin = () => {
                   <td style={{ width: "150px" }}>
                     <button
                       className="btn yellow"
-                      onClick={() => navigate(`/admin/edit/${p.id}`)}
+                      onClick={() => navigate(`/admin/edit/${p.product_id}`)} // SỬA 6: Dùng khóa chính mới
                     >
                       Sửa
                     </button>
                     <button
                       className="btn red"
-                      onClick={() => handleDelete(p.id)}
+                      onClick={() => handleDelete(p.product_id)} // SỬA 7: Dùng khóa chính mới
                     >
                       Xóa
                     </button>

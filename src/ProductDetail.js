@@ -11,9 +11,9 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         const { data, error } = await supabase
-          .from("product1")
+          .from("products") // SỬA 1: Đổi tên bảng
           .select("*")
-          .eq("id", id)
+          .eq("product_id", id) // SỬA 2: Đổi tên cột khóa chính
           .single();
 
         if (error) throw error;

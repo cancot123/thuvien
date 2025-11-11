@@ -17,7 +17,7 @@ import ListProducts_SP from "./ListProducts_SP.js";
 import Chitietsanpham from "./Chitietsanpham";
 
 //@ts-ignore
-import ProductDetail from "./ProductDetail";
+import ProductDetail from "./ProductDetail"; // Đảm bảo đã import
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -33,20 +33,23 @@ import ListProducts_SP_Admin from "./ListProducts_SP_Admin";
 import EditProduct from "./EditProduct";
 
 export default function App() {
-  // return <Home />;
   return (
     <BrowserRouter>
       <Routes>
         {/* ✅ Layout chung cho toàn bộ hệ thống */}
         <Route path="/" element={<Layout />}>
           {/* Trang chính (cho người dùng vãng lai) */}
-          <Route index element={<ListProducts_SP />} />
+          
+          {/* SỬA 1: Xóa 'Route index' trùng lặp cho Admin */}
+          <Route index element={<ListProducts_SP />} /> 
+          
           <Route path="trang1" element={<Trang1 />} />
           <Route path="trang2" element={<Trang2 />} />
           <Route path="sanpham/:id" element={<Chitietsanpham />} />
           <Route path="/admin/edit/:id" element={<EditProduct />} />
 
-          {/* <Route path="detail/:id" element={<ProductDetail />} /> */}
+          {/* SỬA 2: Bật (un-comment) Route cho trang chi tiết */}
+          <Route path="detail/:id" element={<ProductDetail />} />
 
           {/* ✅ Trang đăng nhập (nằm trong Layout) */}
           <Route path="login" element={<LoginPage />} />
