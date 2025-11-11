@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
-import "./assets/css/layout.css";
-import "./assets/css/fonts.css";
+// import "./assets/css/layout.css";
+// import "./assets/css/fonts.css";
+import './assets/css/menu-redesign.css';
+import './assets/css/mobile-menu-redesign.css';
 import MenuTop from "./layouts/MenuTop";
-import MenuBox from "./layouts/MenuBox";
+// import MenuBox from "./layouts/MenuBox";
 import Footer from "./layouts/Footer";
 const Layout = () => {
   return (
@@ -21,15 +23,15 @@ const Layout = () => {
             <div class="logo">
               <a href="/">
                 <img
-                  src="https://giadinh.edu.vn/upload/photo/logogdu-02-5690.png"
+                  src="https://i.pinimg.com/736x/f3/03/a3/f303a31db7a0e9237f169f8397ee01aa.jpg"
                   alt="Logo"
                 />
               </a>
             </div>
 
-            <div id="main_menu">
+            {/* <div id="main_menu">
               <MenuBox />
-            </div>
+            </div> */}
           </div>
         </div>
       </header>
