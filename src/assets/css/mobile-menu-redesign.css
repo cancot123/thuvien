@@ -103,3 +103,21 @@
     background: rgba(255, 255, 255, 0.3);
     opacity: 1; /* Tắt hiệu ứng mờ cũ */
   }
+  /* Thêm vào cuối file new-layout.css */
+
+/* Style cho link "Quản lý Sản phẩm" (làm cho nó giống nút) */
+#header .menu_top ul li .admin-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none; /* Đảm bảo không bị gạch chân */
+}
+
+/* Thêm hiệu ứng hover */
+#header .menu_top ul li .admin-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+}

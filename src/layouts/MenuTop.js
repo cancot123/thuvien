@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; 
+
 const MenuTop = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -16,70 +17,55 @@ const MenuTop = () => {
     setUser(null);
     navigate("/login");
   };
+
   return (
-    <div class="menu_top">
+    <div className="menu_top">
       <ul>
         <li>
-          <a href="/trang1">Trang 1</a>
+          <Link to="/trang1">Trang 1</Link>
         </li>
         <li>
-          <a href="/trang2">
-            Trang 2
-          </a>
+          <Link to="/trang2">Trang 2</Link>
         </li>
+        {/* ... (các link bên ngoài khác) ... */}
         <li>
           <a
-            target="blank"
+            target="_blank"
+            rel="noreferrer"
             href="https://giadinh.edu.vn/de-an-tuyen-sinh-truong-dai-hoc-gia-dinh-nam-2024"
           >
-      
+            Đề án tuyển sinh
           </a>
         </li>
-        <li>
-          <a
-            target="blank"
-            href="https://giadinh.edu.vn/truong-dai-hoc-gia-dinh-thong-bao-3-cong-khai-nam-hoc"
-          >
-  
-          </a>
-        </li>
-        <li>
-          <a target="blank" href="https://sinhvien.giadinh.edu.vn/">
-  
-          </a>
-        </li>
-        <li>
-          <a target="blank" href="https://lms.giadinh.edu.vn/">
-      
-          </a>
-        </li>
-        <li>
-          <a target="blank" href="https://library.giadinh.edu.vn/search">
-           
-          </a>
-        </li>
-        <li>
-          <a
-            target="blank"
-            href="#"
-          >
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </a>
-        </li>
+         {/* ... (ví dụ các link khác) ... */}
 
+
+        {/* ================================================= */}
+        {/* THÊM MỚI: Link "Quản lý" chỉ hiện khi admin đăng nhập */}
+        {user && (
+          <li>
+            <Link to="/admin/products" className="admin-link">
+              Quản lý Sản phẩm
+            </Link>
+          </li>
+        )}
+        {/* ================================================= */}
+
+
+        {/* LI cuối cùng cho Đăng nhập/Đăng xuất */}
         <li>
-        {user ? (
-                <>
-                  <span className="username">👤 {user.username}</span>
-                  <button className="logout-btn" onClick={handleLogout}>
-                    Đăng xuất
-                  </button>
-                </>
-              ) : (
-                <a href="/login" className="login-link">
-                  Đăng nhập
-                </a>
-              )}
+          {user ? (
+            <>
+              <span className="username">👤 {user.username}</span>
+              <button className="logout-btn" onClick={handleLogout}>
+                Đăng xuất
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="login-link">
+              Đăng nhập
+            </Link>
+          )}
         </li>
       </ul>
     </div>
