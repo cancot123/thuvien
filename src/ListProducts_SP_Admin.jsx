@@ -9,9 +9,9 @@ const ListProducts_SP_Admin = () => {
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
-      .from("products") // SỬA 1: Đổi tên bảng
+      .from("products")
       .select("*")
-      .order("product_id", { ascending: true }); // SỬA 2: Đổi tên cột
+      .order("product_id", { ascending: true });
     if (error) console.error("Lỗi:", error.message);
     else setProducts(data);
   };
@@ -21,12 +21,11 @@ const ListProducts_SP_Admin = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    // 'id' ở đây là 'product_id' được truyền vào
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
       const { error } = await supabase
-        .from("products") // SỬA 3: Đổi tên bảng
+        .from("products")
         .delete()
-        .eq("product_id", id); // SỬA 4: Đổi tên cột
+        .eq("product_id", id);
       if (error) alert("Lỗi khi xóa: " + error.message);
       else fetchProducts();
     }
@@ -46,9 +45,6 @@ const ListProducts_SP_Admin = () => {
 
         <div>
           <h2>Quản lý sản phẩm (Admin)</h2>
-
-          {/* Nút thêm mới trên đầu bảng */}
-
           <table className="product-table">
             <thead>
               <tr>
@@ -60,8 +56,9 @@ const ListProducts_SP_Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
-                <tr key={p.product_id}> {/* SỬA 5: Dùng khóa chính mới */}
+              {/* Kiểm tra nếu products tồn tại và là mảng */}
+              {products && products.map((p) => (
+                <tr key={p.product_id || Math.random()}> {/* Thêm Math.random để tránh lỗi key */}
                   <td style={{ width: "100px" }}>
                     <img src={p.image} alt={p.title} className="thumb" />
                   </td>
@@ -71,15 +68,18 @@ const ListProducts_SP_Admin = () => {
                     ⭐ {p.rating_rate} ({p.rating_count})
                   </td>
                   <td style={{ width: "150px" }}>
+                    {/* [SỬA LỖI] Thêm 'disabled' để ngăn lỗi 'undefined' */}
                     <button
                       className="btn yellow"
-                      onClick={() => navigate(`/admin/edit/${p.product_id}`)} // SỬA 6: Dùng khóa chính mới
+                      onClick={() => navigate(`/admin/edit/${p.product_id}`)}
+                      disabled={!p.product_id} // Nút Sửa sẽ bị mờ nếu không có ID
                     >
                       Sửa
                     </button>
                     <button
                       className="btn red"
-                      onClick={() => handleDelete(p.product_id)} // SỬA 7: Dùng khóa chính mới
+                      onClick={() => handleDelete(p.product_id)}
+                      disabled={!p.product_id} // Nút Xóa sẽ bị mờ nếu không có ID
                     >
                       Xóa
                     </button>
