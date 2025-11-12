@@ -20,31 +20,45 @@ const EditProduct = () => {
 
   const [product, setProduct] = useState(initialProductState);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       setIsLoading(true); 
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("product_id", id)
-        .single();
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("product_id", id)
+          .single();
 
-      if (error) {
-        console.error("Lỗi khi tải sản phẩm:", error.message);
-        navigate("/admin/products");
-      } else {
+        if (error) throw error;
         setProduct(data);
+      } catch (err) {
+        console.error("Lỗi khi tải sản phẩm (ID: " + id + "):", err.message);
+        setError("Không thể tải sản phẩm. ID có thể không tồn tại hoặc không hợp lệ.");
+        // [SỬA LỖI]: Thêm alert và redirect tự động nếu fetch thất bại
+        alert("ID sản phẩm không hợp lệ hoặc không tồn tại. Quay lại danh sách.");
+        navigate("/admin/products");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     if (isCreating) {
       setProduct(initialProductState);
-    } else if (id) {
+      setError(null);
+    } else if (id && id !== "" && id !== "undefined") {
       fetchProduct();
+    } else {
+      // [SỬA LỖI]: Thêm alert và redirect nếu ID không hợp lệ ngay từ đầu
+      console.warn("ID không hợp lệ từ URL:", id);  // Logging để debug
+      alert("ID sản phẩm không hợp lệ. Quay lại danh sách.");
+      navigate("/admin/products");
     }
-  }, [id, isCreating, navigate]); 
+    
+  }, [id, isCreating, navigate]);  // Thêm navigate vào dependency
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,12 +71,32 @@ const EditProduct = () => {
     }));
   };
 
+  const validateForm = () => {
+    if (!product.title.trim()) return "Tên sản phẩm không được để trống.";
+    if (product.price <= 0) return "Giá phải lớn hơn 0.";
+    if (product.image && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(product.image)) {
+      return "Link hình ảnh phải là URL hợp lệ (jpg, png, gif, webp).";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    let error;
+    setError(null);
 
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    if (!isCreating && !window.confirm("Bạn có chắc muốn cập nhật sản phẩm này?")) {
+      return;
+    }
+
+    setIsLoading(true);
     try {
+      let error;
       if (isCreating) {
         const { product_id, ...insertData } = product; 
         const { error: insertError } = await supabase
@@ -70,6 +104,9 @@ const EditProduct = () => {
           .insert([insertData]);
         error = insertError;
       } else {
+        if (!id || id === "" || id === "undefined") {
+          throw new Error("ID sản phẩm không hợp lệ, không thể cập nhật.");
+        }
         const { product_id, ...updateData } = product;
         const { error: updateError } = await supabase
           .from("products")
@@ -84,17 +121,26 @@ const EditProduct = () => {
       navigate("/admin/products"); 
 
     } catch (err) {
-      alert("Đã xảy ra lỗi: " + err.message);
+      setError("Đã xảy ra lỗi: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoading && !isCreating) {
-    return <div className="container"><h2>Đang tải dữ liệu...</h2></div>;
+  if (isLoading) {
+    return <div className="container"><h2>Đang xử lý...</h2></div>;
   }
 
-  // JSX (Form)
+  if (error) {
+    return (
+      <div className="container">
+        <h2>Lỗi</h2>
+        <p style={{ color: "red" }}>{error}</p>
+        <button onClick={() => navigate("/admin/products")}>Quay lại danh sách</button>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h2>{isCreating ? "Thêm sản phẩm mới" : "Chỉnh sửa sản phẩm"}</h2>
@@ -108,7 +154,6 @@ const EditProduct = () => {
             value={product.title}
             onChange={handleChange}
             required
-            // Dấu '}' bị thừa đã được XÓA ở đây
           />
         </label>
 
@@ -121,6 +166,7 @@ const EditProduct = () => {
             value={product.price}
             onChange={handleChange}
             required
+            min="0.01"
           />
         </label>
 
@@ -152,8 +198,9 @@ const EditProduct = () => {
             name="image"
             value={product.image}
             onChange={handleChange}
+            placeholder="https://example.com/image.jpg"
           />
-          {product.image && (
+          {product.image && /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(product.image) && (
             <img 
               src={product.image} 
               alt="Preview" 

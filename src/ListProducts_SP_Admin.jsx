@@ -5,15 +5,26 @@ import "./assets/css/quanlysp.css";
 
 const ListProducts_SP_Admin = () => {
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);  // Thêm loading
+  const [error, setError] = useState(null);  // Thêm error
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from("products") // SỬA 1: Đổi tên bảng
-      .select("*")
-      .order("product_id", { ascending: true }); // SỬA 2: Đổi tên cột
-    if (error) console.error("Lỗi:", error.message);
-    else setProducts(data);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("product_id", { ascending: true });
+      if (error) throw error;
+      setProducts(data);
+    } catch (err) {
+      console.error("Lỗi:", err.message);
+      setError("Không thể tải danh sách sản phẩm.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -21,16 +32,34 @@ const ListProducts_SP_Admin = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    // 'id' ở đây là 'product_id' được truyền vào
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
-      const { error } = await supabase
-        .from("products") // SỬA 3: Đổi tên bảng
-        .delete()
-        .eq("product_id", id); // SỬA 4: Đổi tên cột
-      if (error) alert("Lỗi khi xóa: " + error.message);
-      else fetchProducts();
+      try {
+        const { error } = await supabase
+          .from("products")
+          .delete()
+          .eq("product_id", id);
+        
+        if (error) throw error;
+        fetchProducts();  // Refresh list
+      } catch (err) {
+        alert("Lỗi khi xóa: " + err.message);
+      }
     }
   };
+
+  if (isLoading) {
+    return <div className="container"><h2>Đang tải danh sách...</h2></div>;
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <h2>Lỗi</h2>
+        <p style={{ color: "red" }}>{error}</p>
+        <button onClick={fetchProducts}>Thử lại</button>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -46,9 +75,6 @@ const ListProducts_SP_Admin = () => {
 
         <div>
           <h2>Quản lý sản phẩm (Admin)</h2>
-
-          {/* Nút thêm mới trên đầu bảng */}
-
           <table className="product-table">
             <thead>
               <tr>
@@ -60,8 +86,8 @@ const ListProducts_SP_Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
-                <tr key={p.product_id}> {/* SỬA 5: Dùng khóa chính mới */}
+              {products && products.map((p) => (
+                <tr key={p.product_id}>  {/* Sửa: Dùng p.product_id thay vì Math.random() */}
                   <td style={{ width: "100px" }}>
                     <img src={p.image} alt={p.title} className="thumb" />
                   </td>
@@ -73,13 +99,15 @@ const ListProducts_SP_Admin = () => {
                   <td style={{ width: "150px" }}>
                     <button
                       className="btn yellow"
-                      onClick={() => navigate(`/admin/edit/${p.product_id}`)} // SỬA 6: Dùng khóa chính mới
+                      onClick={() => navigate(`/admin/edit/${p.product_id}`)}
+                      disabled={!p.product_id} 
                     >
                       Sửa
                     </button>
                     <button
                       className="btn red"
-                      onClick={() => handleDelete(p.product_id)} // SỬA 7: Dùng khóa chính mới
+                      onClick={() => handleDelete(p.product_id)}
+                      disabled={!p.product_id} 
                     >
                       Xóa
                     </button>
