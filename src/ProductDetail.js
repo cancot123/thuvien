@@ -5,28 +5,40 @@ import { supabase } from "./supabaseClient";
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);  // Thêm loading
+  const [error, setError] = useState(null);  // Thêm error
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         const { data, error } = await supabase
-          .from("products") // SỬA 1: Đổi tên bảng
+          .from("products") 
           .select("*")
-          .eq("product_id", id) // SỬA 2: Đổi tên cột khóa chính
+          .eq("product_id", id)
           .single();
 
         if (error) throw error;
         setProduct(data);
       } catch (err) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", err.message);
+        setError("Không thể tải thông tin sản phẩm. ID có thể không hợp lệ.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchProduct();
+    if (id && id !== "undefined") {  // Sửa: Thêm kiểm tra "undefined"
+      fetchProduct();
+    } else {
+      setError("ID sản phẩm không hợp lệ.");
+      setIsLoading(false);
+    }
   }, [id]);
 
-  if (!product) {
+  if (isLoading) {
     return (
       <div style={{ textAlign: "center", marginTop: "40px" }}>
         <p>Đang tải thông tin sản phẩm...</p>
@@ -34,6 +46,16 @@ const ProductDetail = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <p style={{ color: "red" }}>{error}</p>
+        <button onClick={() => navigate(-1)}>Quay lại</button>
+      </div>
+    );
+  }
+
+  // Giao diện (giữ nguyên)
   return (
     <div
       style={{

@@ -23,7 +23,7 @@ const Layout = () => {
             <div class="logo">
               <a href="/">
                 <img
-                  src="https://i.pinimg.com/736x/f3/03/a3/f303a31db7a0e9237f169f8397ee01aa.jpg"
+                  src="https://sv2.anhsieuviet.com/2025/11/12/c9c48ed795e219bc40f3.jpg"
                   alt="Logo"
                 />
               </a>
