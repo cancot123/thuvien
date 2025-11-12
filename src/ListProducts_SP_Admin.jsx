@@ -43,6 +43,8 @@ const ListProducts_SP_Admin = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
 <<<<<<< HEAD
+
+
       const { error } = await supabase
         .from("products")
         .delete()
